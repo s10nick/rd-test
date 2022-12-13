@@ -1,5 +1,10 @@
 <template>
-  <div>#1. {{ topAlbum.name }}</div>
+  <div>
+    <div v-for="(item, index) in content">
+      <span>#{{ index + 1 }}.</span>
+      <span v-if="index === 0">{{ item.name }}</span>
+    </div>
+  </div>
 </template>
 
 <script>
