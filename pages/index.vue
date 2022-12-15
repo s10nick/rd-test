@@ -24,10 +24,7 @@
       <span v-if="index === 2 || index === 4">Teasers</span>
       <div v-if="index === 2 || index === 4" class="content-block">
         <div v-for="teaser in item" class="teaser">
-          id - {{ teaser.id }} <br>
-          titleBold - {{ teaser.title_bold }} <br>
-          titleNormal - {{ teaser.title_normal }} <br>
-          url - {{ teaser.url }} <br>
+          {{ teaser }}
         </div>
       </div>
     </div>
@@ -37,6 +34,7 @@
 <script>
   import { mapState } from "vuex"
   import _ from "lodash"
+  import * as API from '~/api'
 export default {
   name: 'IndexPage',
   data() {
@@ -59,6 +57,48 @@ export default {
       teasers: state => state.teasers,
       alboms: state => state.alboms
     })
+  },
+  beforeMount() {
+    this.fetchTopAlbum()
+    this.fetchALboms(0)
+  },
+  mounted() {
+    this.fetchTeasers()
+    this.fetchALboms(1)
+  },
+  methods: {
+    async fetchTopAlbum () {
+      try {
+        const response = await API.topAlbum()
+        this.$store.commit('STORE_TOP_ALBUM', response.data)
+      } catch (err) {
+        throw new Error((err && err.data && err.data.msg) || 'Failed to STORE_TOP_ALBUM')
+      }
+    },
+    async fetchTeasers () {
+      try {
+        const response = await API.teasers()
+        this.$store.commit('STORE_TEASERS', response.data.list)
+      } catch (err) {
+        throw new Error((err && err.data && err.data.msg) || 'Failed to STORE_TEASERS')
+      }
+    },
+    async fetchALboms (current) {
+      try {
+        const response = await API.alboms(current)
+        if (response.data === {}) {
+          return
+        } else {
+          this.$store.commit('STORE_ALBOMS', response.data)
+          this.albomCurentId = Number(response.data.current) + 1
+          if (Number(response.data.current) > 0) {
+            this.fetchALboms(Number(response.data.current) + 1)
+          }
+        }
+      } catch (err) {
+        throw new Error((err && err.data && err.data.msg) || 'Failed to STORE_ALBOMS')
+      }
+    },
   }
 }
 </script>
