@@ -5,14 +5,14 @@
       <span v-if="index === 0">{{ item.name }}</span>
       <div v-if="index === 0" class="divider"></div>
       <span v-if="index === 1 || index === 3 || index > 4">
-        current - {{ item[0].current }} ||
-        type - {{ item[0].type }} ||
-        id - {{ item[0].id }} ||
-        slug - {{ item[0].slug }} ||
-        name - {{ item[0].name }}
+        current - {{ item.current }} ||
+        type - {{ item.type }} ||
+        id - {{ item.id }} ||
+        slug - {{ item.slug }} ||
+        name - {{ item.name }}
       </span>
       <div v-if="index === 1 || index === 3 || index > 4" class="content-block">
-        <div v-if="item[0].series.length > 0" v-for="series in item[0].series" class="series">
+        <div v-if="item.series.length > 0" v-for="series in item.series" class="series">
           <span>
             id - {{ series.id }} <br>
             name - {{ series.name }} <br>
@@ -41,20 +41,18 @@ export default {
   name: 'IndexPage',
   data() {
     return {
-      albomCurentId: 0
+      albomCurentId: 0,
     }
   },
   computed: {
     content() {
-      return [
-        this.topAlbum,
-        _.filter(this.alboms, {'type': 'new'}),
-        [ this.teasers[0], this.teasers[1] ],
-        _.filter(this.alboms, {'current': 1}),
-        [ this.teasers[2] ],
-        _.filter(this.alboms, {'current': '4'}),
-        _.filter(this.alboms, {'current': '5'})
-      ]
+      return  []
+        .concat(this.topAlbum)
+        .concat(_.filter(this.alboms, {'type': 'new'}))
+        .concat([ [this.teasers[0], this.teasers[1]] ])
+        .concat(_.filter(this.alboms, {'type': 'top'}))
+        .concat([ [this.teasers[2]] ])
+        .concat(_.filter(this.alboms, album => (album.type !== 'new') && (album.type !== 'top')))
     },
     ...mapState({
       topAlbum: state => state.topAlbum,
@@ -67,6 +65,7 @@ export default {
 
 <style scoped>
   .series {
+    margin-top: 10px;
     width: 180px;
     height: 130px;
     border: 2px solid grey;
@@ -74,6 +73,7 @@ export default {
     padding: 10px;
   }
   .teaser {
+    margin-top: 10px;
     width: 180px;
     height: 100px;
     border: 2px solid grey;

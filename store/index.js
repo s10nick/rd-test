@@ -221,8 +221,6 @@ export const state = () => ({
       ],
       current: "4"
     },
-    {},
-    {},
     {
       slug: "documentaire",
       name: "Documentaire",
@@ -304,6 +302,5 @@ export const state = () => ({
       ],
       current: "5"
     },
-    {}
   ]
 })
